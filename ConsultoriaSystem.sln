@@ -5,6 +5,8 @@ VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsultoriaSystem.Api", "ConsultoriaSystem.Api\ConsultoriaSystem.Api.csproj", "{499F9509-105E-40B5-99D5-A17E320603EF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsultoriaSystem.Test", "ConsultoriaSystem.Test\ConsultoriaSystem.Test.csproj", "{89BF8A75-63BC-45CD-ABD5-0DC31CCCA6EC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{499F9509-105E-40B5-99D5-A17E320603EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{499F9509-105E-40B5-99D5-A17E320603EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{499F9509-105E-40B5-99D5-A17E320603EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89BF8A75-63BC-45CD-ABD5-0DC31CCCA6EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89BF8A75-63BC-45CD-ABD5-0DC31CCCA6EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89BF8A75-63BC-45CD-ABD5-0DC31CCCA6EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89BF8A75-63BC-45CD-ABD5-0DC31CCCA6EC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

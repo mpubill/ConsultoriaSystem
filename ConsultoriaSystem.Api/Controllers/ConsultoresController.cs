@@ -2,13 +2,13 @@
 using Microsoft.AspNetCore.Mvc;
 using ConsultoriaSystem.Api.Services;
 using ConsultoriaSystem.Api.Dtos;
-using ConsultoriaSystem.Api.Common;  
+using ConsultoriaSystem.Api.Common;
 
 namespace ConsultoriaSystem.Api.Controllers
 {
     [ApiController]
     [Route("api/v1/[controller]")]
-    [Authorize] // todos requieren token 
+    [Authorize]
     public class ConsultoresController : ControllerBase
     {
         private readonly IConsultoresService _consultoresService;
@@ -22,7 +22,7 @@ namespace ConsultoriaSystem.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var result = await _consultoresService.GetAllAsync(); 
+            var result = await _consultoresService.GetAllAsync();
 
             var response = ApiResponse<IEnumerable<ConsultorDTO>>.SuccessResponse(
                 data: result,
@@ -59,6 +59,22 @@ namespace ConsultoriaSystem.Api.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([FromBody] ConsultorCreateRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+
+                var errorResponse = ApiResponse<object>.ErrorResponse(
+                    message: "Errores de validación.",
+                    statusCode: StatusCodes.Status400BadRequest,
+                    errors: errors
+                );
+
+                return StatusCode(errorResponse.StatusCode, errorResponse);
+            }
+
             var dto = new ConsultorDTO
             {
                 Nombre = request.Nombre,
@@ -83,6 +99,22 @@ namespace ConsultoriaSystem.Api.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update(int id, [FromBody] ConsultorUpdateRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+
+                var errorResponse = ApiResponse.ErrorResponse(
+                    message: "Errores de validación.",
+                    statusCode: StatusCodes.Status400BadRequest,
+                    errors: errors
+                );
+
+                return StatusCode(errorResponse.StatusCode, errorResponse);
+            }
+
             var dto = new ConsultorDTO
             {
                 ConsultorId = id,
@@ -124,6 +156,5 @@ namespace ConsultoriaSystem.Api.Controllers
 
             return Ok(response);
         }
-
     }
 }

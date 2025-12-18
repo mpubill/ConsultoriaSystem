@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using ConsultoriaSystem.Api.Services;
 using ConsultoriaSystem.Api.Dtos;
-using ConsultoriaSystem.Api.Common;   
+using ConsultoriaSystem.Api.Common;
+using Microsoft.AspNetCore.Http;
+using System.Linq;
 
 namespace ConsultoriaSystem.Api.Controllers
 {
@@ -62,6 +64,23 @@ namespace ConsultoriaSystem.Api.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([FromBody] PaqueteCreateRequest request)
         {
+
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+
+                var errorResponse = ApiResponse<object>.ErrorResponse(
+                    message: "Errores de validación.",
+                    statusCode: StatusCodes.Status400BadRequest,
+                    errors: errors
+                );
+
+                return StatusCode(errorResponse.StatusCode, errorResponse);
+            }
+
             var dto = new PaqueteDTO
             {
                 Nombre = request.Nombre,
@@ -88,6 +107,23 @@ namespace ConsultoriaSystem.Api.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update(int id, [FromBody] PaqueteUpdateRequest request)
         {
+
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+
+                var errorResponse = ApiResponse.ErrorResponse(
+                    message: "Errores de validación.",
+                    statusCode: StatusCodes.Status400BadRequest,
+                    errors: errors
+                );
+
+                return StatusCode(errorResponse.StatusCode, errorResponse);
+            }
+
             var dto = new PaqueteDTO
             {
                 PaqueteId = id,
