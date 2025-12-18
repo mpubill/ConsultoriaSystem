@@ -6,7 +6,7 @@ namespace ConsultoriaSystem.Api.Repositories
     {
         Task<int> InsertAsync(Consultor consultor);
         Task UpdateAsync(Consultor consultor);
-        Task DeleteAsync(int consultorId);
+        Task<int> DeleteAsync(int consultorId);
         Task<Consultor?> GetByIdAsync(int consultorId);
         Task<IEnumerable<Consultor>> GetAllAsync();
 

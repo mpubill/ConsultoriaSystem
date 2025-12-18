@@ -48,7 +48,7 @@ namespace ConsultoriaSystem.Api.Repositories
             await command.ExecuteNonQueryAsync();
         }
 
-        public async Task DeleteAsync(int paqueteId)
+        public async Task<int> DeleteAsync(int paqueteId)
         {
             using var connection = new SqlConnection(_connectionString);
             using var command = new SqlCommand("sp_Paquetes_Delete", connection);
@@ -57,7 +57,8 @@ namespace ConsultoriaSystem.Api.Repositories
             command.Parameters.AddWithValue("@PaqueteId", paqueteId);
 
             await connection.OpenAsync();
-            await command.ExecuteNonQueryAsync();
+            int rows = await command.ExecuteNonQueryAsync();
+            return rows;
         }
 
         public async Task<PaqueteServicio?> GetByIdAsync(int paqueteId)

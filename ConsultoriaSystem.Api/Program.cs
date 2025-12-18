@@ -1,9 +1,12 @@
 ﻿using ConsultoriaSystem.Api.Configuration;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    options.SuppressModelStateInvalidFilter = true;
+});
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c => //Manejando la auth para Swagger en la UI

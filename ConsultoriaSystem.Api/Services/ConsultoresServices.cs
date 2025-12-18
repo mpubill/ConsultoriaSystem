@@ -46,9 +46,10 @@ namespace ConsultoriaSystem.Api.Services
             await _repository.UpdateAsync(entity);
         }
 
-        public Task DeleteAsync(int consultorId)
+        public async Task<bool> DeleteAsync(int id)
         {
-            return _repository.DeleteAsync(consultorId);
+            var rows = await _repository.DeleteAsync(id);
+            return rows > 0;
         }
 
         public async Task<ConsultorDTO?> GetByIdAsync(int consultorId)

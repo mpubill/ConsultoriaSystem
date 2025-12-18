@@ -6,7 +6,7 @@ namespace ConsultoriaSystem.Api.Services
     {
         Task<int> CreateAsync(PaqueteDTO dto);
         Task UpdateAsync(PaqueteDTO dto);
-        Task DeleteAsync(int paqueteId);
+        Task<bool> DeleteAsync(int paqueteId);
         Task<PaqueteDTO?> GetByIdAsync(int paqueteId);
         Task<IEnumerable<PaqueteDTO>> GetAllAsync();
     }

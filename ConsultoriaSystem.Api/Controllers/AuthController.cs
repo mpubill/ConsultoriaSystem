@@ -1,4 +1,5 @@
-﻿using ConsultoriaSystem.Api.Dtos;
+﻿using ConsultoriaSystem.Api.Common;
+using ConsultoriaSystem.Api.Dtos;
 using ConsultoriaSystem.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,12 +19,42 @@ namespace ConsultoriaSystem.Api.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UsuariosDTO request)
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+
+                var apiResponse = ApiResponse<LogginResponseDTO>.ErrorResponse(
+                    message: "Errores de validación",
+                    statusCode: StatusCodes.Status400BadRequest,
+                    errors: errors
+                );
+
+                return StatusCode(apiResponse.StatusCode, apiResponse);
+            }
+
             var response = await _authService.LoginAsync(request);
 
             if (response == null)
-                return Unauthorized(new { message = "Credenciales inválidas" });
+            {
+                var apiResponse = ApiResponse<LogginResponseDTO>.ErrorResponse(
+                    message: "Credenciales inválidas",
+                    statusCode: StatusCodes.Status401Unauthorized,
+                    errors: new[] { "Usuario o contraseña incorrectos." }
+                );
 
-            return Ok(response);
+                return StatusCode(apiResponse.StatusCode, apiResponse);
+            }
+
+            var successResponse = ApiResponse<LogginResponseDTO>.SuccessResponse(
+                data: response,
+                message: "Login exitoso"
+            );
+
+            return Ok(successResponse);
         }
     }
+
 }

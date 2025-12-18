@@ -48,17 +48,19 @@ namespace ConsultoriaSystem.Api.Repositories
             await command.ExecuteNonQueryAsync();
         }
 
-        public async Task DeleteAsync(int consultorId)
+        public async Task<int> DeleteAsync(int consultorId)
         {
-            using var connection = new SqlConnection(_connectionString);
-            using var command = new SqlCommand("sp_Consultores_Delete", connection);
-            command.CommandType = CommandType.StoredProcedure;
+            using var conn = new SqlConnection(_connectionString);
+            using var cmd = new SqlCommand("sp_Consultores_Delete", conn);
+            cmd.CommandType = CommandType.StoredProcedure;
 
-            command.Parameters.AddWithValue("@ConsultorId", consultorId);
+            cmd.Parameters.AddWithValue("@ConsultorId", consultorId);
 
-            await connection.OpenAsync();
-            await command.ExecuteNonQueryAsync();
+            await conn.OpenAsync();
+            int rows = await cmd.ExecuteNonQueryAsync();
+            return rows;
         }
+
 
         public async Task<Consultor?> GetByIdAsync(int consultorId)
         {

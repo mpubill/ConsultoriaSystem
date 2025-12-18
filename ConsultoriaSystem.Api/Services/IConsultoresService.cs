@@ -6,7 +6,7 @@ namespace ConsultoriaSystem.Api.Services
     {
         Task<int> CreateAsync(ConsultorDTO dto);
         Task UpdateAsync(ConsultorDTO dto);
-        Task DeleteAsync(int consultorId);
+        Task<bool> DeleteAsync(int consultorId);
         Task<ConsultorDTO?> GetByIdAsync(int consultorId);
         Task<IEnumerable<ConsultorDTO>> GetAllAsync();
     }

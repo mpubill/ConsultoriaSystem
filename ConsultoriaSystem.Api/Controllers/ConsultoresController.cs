@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ConsultoriaSystem.Api.Services;
 using ConsultoriaSystem.Api.Dtos;
+using ConsultoriaSystem.Api.Common;  
 
 namespace ConsultoriaSystem.Api.Controllers
 {
@@ -11,22 +12,24 @@ namespace ConsultoriaSystem.Api.Controllers
     public class ConsultoresController : ControllerBase
     {
         private readonly IConsultoresService _consultoresService;
-        private readonly IConsultorPaqueteService _consultorPaqueteService;
 
-        public ConsultoresController(
-            IConsultoresService consultoresService,
-            IConsultorPaqueteService consultorPaqueteService)
+        public ConsultoresController(IConsultoresService consultoresService)
         {
             _consultoresService = consultoresService;
-            _consultorPaqueteService = consultorPaqueteService;
         }
 
         // GET /api/v1/consultores
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var result = await _consultoresService.GetAllAsync(); // devuelve List<ConsultorDto>
-            return Ok(result);
+            var result = await _consultoresService.GetAllAsync(); 
+
+            var response = ApiResponse<IEnumerable<ConsultorDTO>>.SuccessResponse(
+                data: result,
+                message: "Consultores obtenidos correctamente.",
+                statusCode: StatusCodes.Status200OK);
+
+            return Ok(response);
         }
 
         // GET /api/v1/consultores/{id}
@@ -35,9 +38,20 @@ namespace ConsultoriaSystem.Api.Controllers
         {
             var consultor = await _consultoresService.GetByIdAsync(id);
             if (consultor == null)
-                return NotFound();
+            {
+                var notFoundResponse = ApiResponse<ConsultorDTO>.ErrorResponse(
+                    message: "Consultor no encontrado.",
+                    statusCode: StatusCodes.Status404NotFound);
 
-            return Ok(consultor);
+                return NotFound(notFoundResponse);
+            }
+
+            var response = ApiResponse<ConsultorDTO>.SuccessResponse(
+                data: consultor,
+                message: "Consultor obtenido correctamente.",
+                statusCode: StatusCodes.Status200OK);
+
+            return Ok(response);
         }
 
         // POST /api/v1/consultores (solo Admin)
@@ -55,7 +69,13 @@ namespace ConsultoriaSystem.Api.Controllers
             };
 
             var id = await _consultoresService.CreateAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { id }, new { id });
+
+            var response = ApiResponse<object>.SuccessResponse(
+                data: new { id },
+                message: "Consultor creado correctamente.",
+                statusCode: StatusCodes.Status201Created);
+
+            return StatusCode(StatusCodes.Status201Created, response);
         }
 
         // PUT /api/v1/consultores/{id} (solo Admin)
@@ -65,7 +85,7 @@ namespace ConsultoriaSystem.Api.Controllers
         {
             var dto = new ConsultorDTO
             {
-                ConsultorId = id, 
+                ConsultorId = id,
                 Nombre = request.Nombre,
                 AreaEspecializacion = request.AreaEspecializacion,
                 TarifaHora = request.TarifaHora,
@@ -74,7 +94,12 @@ namespace ConsultoriaSystem.Api.Controllers
             };
 
             await _consultoresService.UpdateAsync(dto);
-            return NoContent();
+
+            var response = ApiResponse.SuccessResponse(
+                message: "Consultor actualizado correctamente.",
+                statusCode: StatusCodes.Status200OK);
+
+            return Ok(response);
         }
 
         // DELETE /api/v1/consultores/{id} (solo Admin)
@@ -82,27 +107,23 @@ namespace ConsultoriaSystem.Api.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
-            await _consultoresService.DeleteAsync(id);
-            return NoContent();
+            var deleted = await _consultoresService.DeleteAsync(id);
+
+            if (!deleted)
+            {
+                var notFoundResponse = ApiResponse.ErrorResponse(
+                    message: "Consultor no encontrado.",
+                    statusCode: StatusCodes.Status404NotFound);
+
+                return NotFound(notFoundResponse);
+            }
+
+            var response = ApiResponse.SuccessResponse(
+                message: "Consultor eliminado correctamente.",
+                statusCode: StatusCodes.Status200OK);
+
+            return Ok(response);
         }
 
-        [HttpPost("{id:int}/paquetes/{paqueteId:int}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> AsignarPaquete(int id, int paqueteId)
-        {
-            var asignacionId = await _consultorPaqueteService.AsignarPaqueteAsync(id, paqueteId);
-            return Ok(new { asignacionId });
-        }
-
-        // DELETE /api/v1/consultores/{id}/paquetes/{paqueteId}
-        // Quitar paquete de consultor (solo Admin)
-        [HttpDelete("{id:int}/paquetes/{paqueteId:int}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> DesasignarPaquete(int id, int paqueteId)
-        {
-            await _consultorPaqueteService.DesasignarPaqueteAsync(id, paqueteId);
-            return NoContent();
-        }
     }
 }
-

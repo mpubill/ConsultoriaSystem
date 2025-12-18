@@ -45,10 +45,12 @@ namespace ConsultoriaSystem.Api.Services
             await _repository.UpdateAsync(entity);
         }
 
-        public Task DeleteAsync(int paqueteId)
+        public async Task<bool> DeleteAsync(int paqueteId)
         {
-            return _repository.DeleteAsync(paqueteId);
+            var rows = await _repository.DeleteAsync(paqueteId);
+            return rows > 0;
         }
+
 
         public async Task<PaqueteDTO?> GetByIdAsync(int paqueteId)
         {
