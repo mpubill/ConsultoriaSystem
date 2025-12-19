@@ -1,8 +1,9 @@
 # ConsultoriaSystem
 1. Descripción General
+
 ConsultoriaSystem es una API desarrollada con .NET 6 Web API como parte de una prueba técnica. El sistema permite gestionar consultores, paquetes de servicio y relaciones entre ambos, con autenticación JWT, validaciones, paginación, reportes y pruebas unitarias.
 
-2. Tecnologías Utilizadas
+3. Tecnologías Utilizadas
 - .NET 6 Web API
 - SQL Server 
 - Autenticación JWT + Roles (Admin / User)
