@@ -12,7 +12,6 @@ namespace ConsultoriaSystem.Api.Dtos
         [StringLength(150)]
         public string AreaEspecializacion { get; set; } = null!;
 
-        [Range(30, 200, ErrorMessage = "La tarifa debe estar entre $30 y $200.")]
         public decimal TarifaHora { get; set; }
 
         [Required]

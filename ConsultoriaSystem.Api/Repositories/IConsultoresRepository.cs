@@ -9,6 +9,8 @@ namespace ConsultoriaSystem.Api.Repositories
         Task<int> DeleteAsync(int consultorId);
         Task<Consultor?> GetByIdAsync(int consultorId);
         Task<IEnumerable<Consultor>> GetAllAsync();
+        Task<bool> EmailExistsAsync(string email);
+        Task<bool> NombreAreaExistsAsync(string nombre, string area);
 
     }
 }

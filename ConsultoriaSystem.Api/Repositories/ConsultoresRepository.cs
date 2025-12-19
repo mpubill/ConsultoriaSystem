@@ -26,7 +26,7 @@ namespace ConsultoriaSystem.Api.Repositories
             command.Parameters.AddWithValue("@EmailCorporativo", consultor.EmailCorporativo);
 
             await connection.OpenAsync();
-            var result = await command.ExecuteScalarAsync(); 
+            var result = await command.ExecuteScalarAsync();
 
             return Convert.ToInt32(result);
         }
@@ -98,6 +98,38 @@ namespace ConsultoriaSystem.Api.Repositories
             return list;
         }
 
+        public async Task<bool> EmailExistsAsync(string email)
+        {
+            using var connection = new SqlConnection(_connectionString);
+            using var command = new SqlCommand("sp_Consultores_EmailExists", connection);
+            command.CommandType = CommandType.StoredProcedure;
+
+            command.Parameters.AddWithValue("@EmailCorporativo", email);
+
+            await connection.OpenAsync();
+            var result = await command.ExecuteScalarAsync();
+
+            // asumimos que el SP devuelve COUNT(*)
+            int count = Convert.ToInt32(result);
+            return count > 0;
+        }
+
+        public async Task<bool> NombreAreaExistsAsync(string nombre, string area)
+        {
+            using var connection = new SqlConnection(_connectionString);
+            using var command = new SqlCommand("sp_Consultores_NombreAreaExists", connection);
+            command.CommandType = CommandType.StoredProcedure;
+
+            command.Parameters.AddWithValue("@Nombre", nombre);
+            command.Parameters.AddWithValue("@AreaEspecializacion", area);
+
+            await connection.OpenAsync();
+            var result = await command.ExecuteScalarAsync();
+
+            int count = Convert.ToInt32(result);
+            return count > 0;
+        }
+
         private static Consultor Map(SqlDataReader reader)
         {
             return new Consultor
@@ -113,4 +145,3 @@ namespace ConsultoriaSystem.Api.Repositories
         }
     }
 }
-

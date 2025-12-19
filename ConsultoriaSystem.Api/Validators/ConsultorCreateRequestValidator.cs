@@ -1,20 +1,19 @@
 ﻿using ConsultoriaSystem.Api.Dtos;
-using ConsultoriaSystem.Api.Repositories;
 using FluentValidation;
 
 namespace ConsultoriaSystem.Api.Validators
 {
     public class ConsultorCreateRequestValidator : AbstractValidator<ConsultorCreateRequest>
     {
-        public ConsultorCreateRequestValidator(IConsultoresRepository consultorRepository)
+        public ConsultorCreateRequestValidator()
         {
             RuleFor(x => x.Nombre)
-                .NotEmpty()
-                .MaximumLength(150);
+                .NotEmpty().WithMessage("El nombre es obligatorio.")
+                .MaximumLength(150).WithMessage("El nombre debe tener máximo 150 caracteres.");
 
             RuleFor(x => x.AreaEspecializacion)
-                .NotEmpty()
-                .MaximumLength(150);
+                .NotEmpty().WithMessage("El área de especialización es obligatoria.")
+                .MaximumLength(150).WithMessage("El área debe tener máximo 150 caracteres.");
 
             RuleFor(x => x.TarifaHora)
                 .InclusiveBetween(30, 200)
@@ -22,9 +21,8 @@ namespace ConsultoriaSystem.Api.Validators
 
             RuleFor(x => x.EmailCorporativo)
                 .NotEmpty().WithMessage("El email corporativo es obligatorio.")
-                .EmailAddress().WithMessage("Formato de correo inválido.")
-                .MaximumLength(150);
-
+                .EmailAddress().WithMessage("El formato del email no es válido.")
+                .MaximumLength(150).WithMessage("El email debe tener máximo 150 caracteres.");
         }
     }
 }

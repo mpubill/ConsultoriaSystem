@@ -1,4 +1,6 @@
 ﻿using ConsultoriaSystem.Api.Configuration;
+using ConsultoriaSystem.Api.Validators;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 
@@ -47,7 +49,11 @@ builder.Services
     .AddApplicationServices()
     .AddRepositories()
     .AddJwtAuthentication(builder.Configuration)
-    .AddCaching();
+    .AddCaching()
+    .AddFluentValidation(fv =>
+    {
+        fv.RegisterValidatorsFromAssemblyContaining<ConsultorCreateRequestValidator>();
+    });
 
 var app = builder.Build();
 

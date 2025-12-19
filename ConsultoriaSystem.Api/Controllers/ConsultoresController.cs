@@ -81,17 +81,29 @@ namespace ConsultoriaSystem.Api.Controllers
                 AreaEspecializacion = request.AreaEspecializacion,
                 TarifaHora = request.TarifaHora,
                 EmailCorporativo = request.EmailCorporativo,
-                Activo = true // por defecto
+                Activo = true 
             };
 
-            var id = await _consultoresService.CreateAsync(dto);
+            try
+            {
+                var id = await _consultoresService.CreateAsync(dto);
 
-            var response = ApiResponse<object>.SuccessResponse(
-                data: new { id },
-                message: "Consultor creado correctamente.",
-                statusCode: StatusCodes.Status201Created);
+                var response = ApiResponse<object>.SuccessResponse(
+                    data: new { id },
+                    message: "Consultor creado correctamente.",
+                    statusCode: StatusCodes.Status201Created);
 
-            return StatusCode(StatusCodes.Status201Created, response);
+                return StatusCode(StatusCodes.Status201Created, response);
+            }
+            catch (InvalidOperationException ex)
+            {
+                var errorResponse = ApiResponse<object>.ErrorResponse(
+                    message: ex.Message,
+                    statusCode: StatusCodes.Status400BadRequest,
+                    errors: new[] { ex.Message });
+
+                return StatusCode(errorResponse.StatusCode, errorResponse);
+            }
         }
 
         // PUT /api/v1/consultores/{id} (solo Admin)
@@ -125,13 +137,36 @@ namespace ConsultoriaSystem.Api.Controllers
                 Activo = request.Activo
             };
 
-            await _consultoresService.UpdateAsync(dto);
+            try
+            {
+                await _consultoresService.UpdateAsync(dto);
 
-            var response = ApiResponse.SuccessResponse(
-                message: "Consultor actualizado correctamente.",
-                statusCode: StatusCodes.Status200OK);
+                var response = ApiResponse.SuccessResponse(
+                    message: "Consultor actualizado correctamente.",
+                    statusCode: StatusCodes.Status200OK);
 
-            return Ok(response);
+                return Ok(response);
+            }
+            catch (InvalidOperationException ex)
+            {
+                // Ej: consultor no existe, email ya usado, nombre+área duplicados, etc.
+                var errorResponse = ApiResponse.ErrorResponse(
+                    message: ex.Message,
+                    statusCode: StatusCodes.Status400BadRequest,
+                    errors: new[] { ex.Message });
+
+                return StatusCode(errorResponse.StatusCode, errorResponse);
+            }
+            catch (ArgumentException ex)
+            {
+                // Por ejemplo: si no vino el ConsultorId en el DTO
+                var errorResponse = ApiResponse.ErrorResponse(
+                    message: ex.Message,
+                    statusCode: StatusCodes.Status400BadRequest,
+                    errors: new[] { ex.Message });
+
+                return StatusCode(errorResponse.StatusCode, errorResponse);
+            }
         }
 
         // DELETE /api/v1/consultores/{id} (solo Admin)

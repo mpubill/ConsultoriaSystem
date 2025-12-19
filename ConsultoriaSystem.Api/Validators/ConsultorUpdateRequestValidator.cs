@@ -21,11 +21,8 @@ namespace ConsultoriaSystem.Api.Validators
 
             RuleFor(x => x.EmailCorporativo)
                 .NotEmpty().WithMessage("El email corporativo es obligatorio.")
-                .EmailAddress().WithMessage("Formato de email inválido.")
+                .EmailAddress().WithMessage("El formato del email no es válido.")
                 .MaximumLength(150).WithMessage("El email debe tener máximo 150 caracteres.");
-
-            RuleFor(x => x.Activo)
-                .NotNull().WithMessage("El estado activo es obligatorio.");
         }
     }
 }
